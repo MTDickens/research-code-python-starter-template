@@ -8,9 +8,9 @@ A basic template for building Python packages.
 A package built from this starter code will have the following features:
 - **Easy to install** with `uv sync` (creates `.venv`; see `pyproject.toml` and `uv.lock`)
 - **Continuous integration** with GitHub Actions (see `.github/workflows/ci.yml` and `run_ci_checks.sh`)
-- **Autoformatting** with black, isort, and docformatter (see `run_autoformat.sh`)
-- **Linting** with pytest-pylint (see `.pylintrc`)
-- **Type checking** with mypy (see `pyproject.toml`)
+- **Autoformatting** with Ruff (see `run_autoformat.sh`)
+- **Linting** with Ruff (see `pyproject.toml`)
+- **Type checking** with ty (see `pyproject.toml`)
 - **Unit tests** with pytest (see `tests/`)
 
 ## Instructions
@@ -32,9 +32,9 @@ A package built from this starter code will have the following features:
     - Install runtime dependencies only (creates `.venv`): `uv sync`
     - Install dev tools (formatting/tests/type-checking): `uv sync --extra develop`
     - Common commands (run inside the uv environment):
-        - `uv run black .`
-        - `uv run isort .`
-        - `uv run mypy .`
+        - `uv run ruff format .`
+        - `uv run ruff check .`
+        - `uv run ty check`
         - `uv run pytest tests/`
     - This template commits `uv.lock`. After changing dependencies, run `uv lock` and commit the updated lockfile. CI uses `uv sync --frozen --extra develop`.
 8. **Replace the starter files** (`README.md`, `LICENSE`, `config.json`, `apply_configuration.py`, `structs.py`, `utils.py` and the analogous files in `tests/`) with some of your own.

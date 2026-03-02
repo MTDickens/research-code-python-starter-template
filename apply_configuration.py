@@ -49,7 +49,7 @@ def _main() -> None:
     outer_dir = Path(".").parent.resolve()
     config_file = outer_dir / "config.json"
     assert config_file.exists(), "Missing config file"
-    with open(config_file, "r", encoding="utf-8") as fp:
+    with open(config_file, encoding="utf-8") as fp:
         config = json.load(fp)
 
     # Validate the config.
@@ -58,17 +58,17 @@ def _main() -> None:
     github_username = config["github-username"]
     assert " " not in github_username, "Malformed GitHub username"
     package_name = config["your-package-name"]
-    assert (
-        " " not in package_name
-    ), "Package names cannot contain spaces (you want to `import package_name`)"
-    assert (
-        "-" not in package_name
-    ), "Package names cannot dashes (you want to `import package_name`)"
+    assert " " not in package_name, (
+        "Package names cannot contain spaces (you want to `import package_name`)"
+    )
+    assert "-" not in package_name, (
+        "Package names cannot dashes (you want to `import package_name`)"
+    )
     python_version = config["python-version"]
     assert python_version.startswith("3"), "Only Python 3 is supported"
-    assert python_version.startswith(
-        "3."
-    ), "Missing dot in Python version (example: 3.10)"
+    assert python_version.startswith("3."), (
+        "Missing dot in Python version (example: 3.10)"
+    )
     python_subversion = python_version.split(".")[1]
     assert python_subversion.isdigit()
 
@@ -79,7 +79,7 @@ def _main() -> None:
     git_repo = outer_dir / ".git"
     if git_repo.exists():
         git_config_file = git_repo / "config"
-        with open(git_config_file, "r", encoding="utf-8") as fp:
+        with open(git_config_file, encoding="utf-8") as fp:
             git_config_contents = fp.read()
         if "git@github.com:tomsilver/python-starter.git" in git_config_contents:
             shutil.rmtree(git_repo)

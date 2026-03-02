@@ -15,13 +15,9 @@ dependencies = [
 
 [project.optional-dependencies]
 develop = [
-    "black",
-    "docformatter",
-    "isort",
-    "mypy",
-    "pylint>=2.14.5",
-    "pytest-pylint>=0.18.0",
     "pytest>=7.2.2",
+    "ruff",
+    "ty",
 ]
 
 [tool.setuptools.packages.find]
@@ -30,30 +26,34 @@ where = ["src"]
 [tool.setuptools.package-data]
 python_starter = ["py.typed"]
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ["py310"]
+target-version = "py310"
 
-[tool.isort]
-py_version = 310
-profile = "black"
-multi_line_output = 2
-skip_glob = ["venv/*", ".venv/*"]
-split_on_trailing_comma = true
-
-[tool.docformatter]
-line-length = 88
-wrap-summaries = 88
-wrap-descriptions = 88
-
-[tool.mypy]
-strict_equality = true
-disallow_untyped_calls = true
-warn_unreachable = true
-exclude = ["venv/*", ".venv/*"]
-
-[[tool.mypy.overrides]]
-module = [
-    "matplotlib.*",
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "D", "UP", "PL"]
+ignore = [
+    "D203", # 1 blank line required before class docstring (incompatible with D211)
+    "D213", # Multi-line docstring summary should start at the second line (incompatible with D212)
 ]
-ignore_missing_imports = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["python_starter"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[tool.ty.environment]
+python-version = "3.10"
+
+[tool.ty.src]
+include = ["src", "tests"]
+
+[tool.ty.analysis]
+respect-type-ignore-comments = true
