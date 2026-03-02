@@ -147,7 +147,12 @@ def _main() -> None:
         "310": f"3{python_subversion}",
     }
     _replace_all_occurences(
-        substitutions, exclude={outer_dir / "apply_configuration.py", config_file}
+        substitutions,
+        exclude={
+            outer_dir / "apply_configuration.py",
+            config_file,
+            outer_dir / "uv.lock",
+        },
     )
 
     # Rename the package repo.
