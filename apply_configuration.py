@@ -1,6 +1,12 @@
 """A file for initializing the repository.
 
 This file should be deleted after initial setup.
+
+Please do not run this file if you are user "MTDickens" and have just cloned the
+repository for the sole purpose of contributing to the repository itself.
+
+This file is only meant for users who have cloned the repository as a template for their
+own work.
 """
 
 import json
@@ -81,9 +87,15 @@ def _main() -> None:
         git_config_file = git_repo / "config"
         with open(git_config_file, encoding="utf-8") as fp:
             git_config_contents = fp.read()
-        if "git@github.com:tomsilver/python-starter.git" in git_config_contents:
+        if (
+            "git@github.com:MTDickens/research-code-python-starter-template"
+            in git_config_contents
+        ):
             shutil.rmtree(git_repo)
-        elif "https://github.com/tomsilver/python-starter.git" in git_config_contents:
+        elif (
+            "https://github.com/MTDickens/research-code-python-starter-template"
+            in git_config_contents
+        ):
             shutil.rmtree(git_repo)
 
     # Initialize the repo anew.
