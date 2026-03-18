@@ -3,24 +3,30 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sym-img"
+name = "python_starter"
 version = "0.1.0"
-description = "Code for symbolic imagination paper"
+description = "A basic starter for Python packages."
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
-    "hydra-core>=1.3.2",
-    "ipdb>=0.13.13",
+   "hydra-core",
+   "ipdb",
+   "matplotlib",
+   "numpy",
 ]
 
 [project.optional-dependencies]
-develop = ["pytest>=7.2.2", "pytest-xdist>=3.8.0", "ruff", "ty"]
+develop = [
+    "pytest>=7.2.2",
+    "ruff",
+    "ty",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-sym_img = ["py.typed"]
+python_starter = ["py.typed"]
 
 [tool.ruff]
 line-length = 128
@@ -40,7 +46,7 @@ max-branches = 30
 max-statements = 150
 
 [tool.ruff.lint.isort]
-known-first-party = ["sym_img"]
+known-first-party = ["python_starter"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
@@ -52,7 +58,7 @@ docstring-code-format = true
 docstring-code-line-length = "dynamic"
 
 [tool.ty.environment]
-python-version = "3.12"
+python-version = "3.10"
 
 [tool.ty.src]
 include = ["src", "tests"]
@@ -61,7 +67,7 @@ include = ["src", "tests"]
 respect-type-ignore-comments = true
 
 [tool.uv.sources]
-sym-img = { workspace = true }
+python_starter = { workspace = true }
 
 [dependency-groups]
-dev = ["sym-img"]
+dev = ["python_starter"]
