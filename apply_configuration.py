@@ -15,6 +15,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parent
+
 
 def _multi_replace(substitutions: dict[str, str], text: str) -> str:
     # Use re to replace everything in one pass, avoiding issues with the user's
@@ -26,16 +28,23 @@ def _multi_replace(substitutions: dict[str, str], text: str) -> str:
 
 def _replace_all_occurences(
     substitutions: dict[str, str],
+    repo_root: Path,
     exclude: set[Path] | None = None,
 ) -> None:
     if exclude is None:
         exclude = set()
     # Get files in this repository (e.g., exclude venv/).
     known_files: set[Path] = set()
-    outer_dir = Path(".").parent.resolve()
-    proc = subprocess.run(["git", "ls-files"], encoding="utf-8", stdout=subprocess.PIPE, check=True)
+    proc = subprocess.run(
+        ["git", "ls-files"],
+        cwd=repo_root,
+        encoding="utf-8",
+        stdout=subprocess.PIPE,
+        check=True,
+    )
     for line in proc.stdout.split("\n"):
-        known_files.add((outer_dir / line).resolve())
+        if line:
+            known_files.add((repo_root / line).resolve())
     known_files -= exclude
     for file_path in known_files:
         if file_path.is_dir():
@@ -50,8 +59,8 @@ def _replace_all_occurences(
 
 def _main() -> None:
     # Parse the config.
-    outer_dir = Path(".").parent.resolve()
-    config_file = outer_dir / "config.json"
+    repo_root = REPO_ROOT
+    config_file = repo_root / "config.json"
     assert config_file.exists(), "Missing config file"
     with open(config_file, encoding="utf-8") as fp:
         config = json.load(fp)
@@ -71,10 +80,10 @@ def _main() -> None:
     assert python_subversion.isdigit()
 
     # Get the repository name from this directory.
-    repo_name = outer_dir.name
+    repo_name = repo_root.name
 
     # Delete the existing git files if they are from the starter repo.
-    git_repo = outer_dir / ".git"
+    git_repo = repo_root / ".git"
     if git_repo.exists():
         git_config_file = git_repo / "config"
         with open(git_config_file, encoding="utf-8") as fp:
@@ -85,22 +94,24 @@ def _main() -> None:
             shutil.rmtree(git_repo)
 
     # Initialize the repo anew.
-    subprocess.run(["git", "init"], check=True, capture_output=True)
+    subprocess.run(["git", "init"], cwd=repo_root, check=True, capture_output=True)
     # Rename branch to main if not already on it
     current_branch = subprocess.run(
-        ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+        ["git", "symbolic-ref", "--short", "HEAD"],
+        cwd=repo_root,
         check=True,
         capture_output=True,
         encoding="utf-8",
     ).stdout.strip()
     if current_branch != "main":
-        subprocess.run(["git", "branch", "-M", "main"], check=True, capture_output=True)
-    subprocess.run(["git", "add", "."], check=True, capture_output=True)
+        subprocess.run(["git", "branch", "-M", "main"], cwd=repo_root, check=True, capture_output=True)
+    subprocess.run(["git", "add", "."], cwd=repo_root, check=True, capture_output=True)
 
     # Check if the remote already exists (if this script is being run twice).
     # This can happen if the user makes a mistake in their GitHub username.
     ret = subprocess.run(
         ["git", "remote", "get-url", "origin"],
+        cwd=repo_root,
         check=False,
         capture_output=True,
     )
@@ -119,6 +130,7 @@ def _main() -> None:
             "origin",
             github_url,
         ],
+        cwd=repo_root,
         check=True,
         capture_output=True,
     )
@@ -134,19 +146,16 @@ def _main() -> None:
     }
     _replace_all_occurences(
         substitutions,
+        repo_root=repo_root,
         exclude={
-            outer_dir / "apply_configuration.py",
+            repo_root / "apply_configuration.py",
             config_file,
-            outer_dir / "uv.lock",
+            repo_root / "uv.lock",
         },
     )
 
     # Rename the package repo.
-    subprocess.run(
-        ["mv", "src/python_starter", f"src/{package_name}"],
-        check=True,
-        capture_output=True,
-    )
+    (repo_root / "src" / "python_starter").rename(repo_root / "src" / package_name)
 
     # Report succcess.
     print("Configuration applied successfully.")
