@@ -121,7 +121,7 @@ def _main() -> None:
     # Remote doesn't exist, so add the URL.
     else:
         remote_command = "add"
-    github_url = f"git@github.com:{github_username}/{repo_name}.git"
+    github_url = f"https://github.com:{github_username}/{repo_name}.git"
     subprocess.run(
         [
             "git",
